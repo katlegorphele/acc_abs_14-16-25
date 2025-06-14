@@ -8,9 +8,8 @@ async function main() {
   const EntryPoint = await hre.ethers.getContractAt("EntryPoint", EP_address);
   const Account = await hre.ethers.getContractFactory("Account");
 
-  const [signer] = await hre.ethers.getSigners();
+  const [signer, signer2 ] = await hre.ethers.getSigners();
   const addr1 = await signer.getAddress();
-
   const initCode = AF_address + AccountFactory.interface.encodeFunctionData("createAccount", [addr1]).slice(2);
 
   let sender;
@@ -38,7 +37,8 @@ async function main() {
   };
 
   const userOpHash = await EntryPoint.getUserOpHash(userOp);
-  const signature = await signer.signMessage(hre.ethers.getBytes(userOpHash));
+//   const signature = await signer.signMessage(hre.ethers.getBytes(userOpHash));
+  const signature = await signer2.signMessage(hre.ethers.getBytes(userOpHash));
   userOp.signature = signature;
 
   const tx = await EntryPoint.handleOps([userOp], addr1);
